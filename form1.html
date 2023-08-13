@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login and Registration Form</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #df6969;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #form-container {
+            background-color: #95e3b2;
+            padding: 39px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            width: 390px;
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #222;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+         }
+
+         #welcome-container {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background-color: #cbe9ac;
+            border-color: black;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+         }
+
+         </style>
+         </head>
+
+<body>
+    <div id="form-container">
+        <strong><h2>Register</h2></strong>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+<hr style="width:100%;  border-width: 2px;">
+        <strong><h2>Login</h2></strong>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+
+       
+    </div>
+
+    <div id="welcome-container">
+        <h1>Welcome </h1>
+        <p>You are now logged in.</p>
+        <p>Current Date and Time: <span id="dateTime"></span></p>
+        <p>Owner: SARAS KUMAR</p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <script>
+        const users = [];
+        let currentUser = null;
+
+        const bcrypt = dcodeIO.bcrypt;
+
+        function register() {
+            const username = document.getElementById("registerUsername").value;
+            const password = document.getElementById("registerPassword").value;
+
+            bcrypt.genSalt(10, function (err, salt) {
+                bcrypt.hash(password, salt, function (err, hash) {
+                    users.push({
+                        username,
+                        password: hash
+                    });
+
+                    alert("Registration successful!");
+                    clearRegisterForm();
+                });
+            });
+        }
+
+        function login() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const user = users.find(u => u.username === username);
+
+            if (user) {
+                bcrypt.compare(password, user.password, function (err, result) {
+                    if (result) {
+                        currentUser = user;
+                        showWelcomePage();
+                    } else {
+                        alert("Login failed. Incorrect username or password.");
+                    }
+                });
+            } else {
+                alert("Login failed. Incorrect username or password.");
+            }
+
+            clearLoginForm();
+        }
+
+        function showWelcomePage() {
+            document.getElementById("form-container").style.display = "none";
+            document.getElementById("welcome-container").style.display = "block";
+            updateDateTime();
+        }
+
+        function updateDateTime() {
+            const dateTimeSpan = document.getElementById("dateTime");
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            };
+            dateTimeSpan.textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById("form-container").style.display = "block";
+            document.getElementById("welcome-container").style.display = "none";
+            clearLoginForm();
+        }
+
+        function clearRegisterForm() {
+            document.getElementById("registerUsername").value = "";
+            document.getElementById("registerPassword").value = "";
+        }
+
+        function clearLoginForm() {
+            document.getElementById("loginUsername").value = "";
+            document.getElementById("loginPassword").value = "";
+        }
+    </script>
+</body>
+
+</html>
